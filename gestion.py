@@ -5,7 +5,7 @@ import logging
 import random
 from typing import Dict, Optional, Type
 
-from models import Heroe, Personaje, Villano
+from models import Heroe, Personaje, Villano, Jugador, CuerpoTecnico
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +16,8 @@ class Gestion:
     def __init__(self):
         self.heroes: Dict[int, Heroe] = {}
         self.villanos: Dict[int, Villano] = {}
+        self.plantilla: Dict[str, Jugador] = {}
+        self.plantilla: Dict[str, CuerpoTecnico] = {}
         self._siguiente_id = 1
 
     def _obtener_diccionario(self, tipo: str):
@@ -24,6 +26,10 @@ class Gestion:
             return self.heroes
         if tipo in ("villano", "villanos"):
             return self.villanos
+        if tipo in ("jugador", "jugadores"):
+            return self.plantilla
+        if tipo in ("cuerpotecnico", "cuerpo técnico", "cuerpo tecnico", "cuerpo_tecnico"):
+            return self.plantilla
         raise ValueError("Tipo no válido. Escribe 'heroe' o 'villano'.")
 
     @staticmethod
@@ -47,6 +53,34 @@ class Gestion:
             diccionario[identificador] = personaje
             self._siguiente_id += 1
 
+            logger.info(
+                "Creado %s id=%s nombre=%s %s",
+                clase.__name__, identificador, nombre, apellidos
+            )
+            return personaje
+        except (ValueError, TypeError):
+            logger.exception("No se pudo crear el personaje.")
+            raise
+        except Exception:
+            logger.exception("Error inesperado al crear un personaje.")
+            raise
+
+    def crear_personaje_plantilla(self, tipo: str, nombre: str, apellidos: str,
+                        fecha_nacimiento: str, posicion: str) -> Personaje:
+        """Crea un personaje y lo almacena en el diccionario correspondiente."""
+        try:
+            diccionario = self._obtener_diccionario(tipo)
+            fecha = self._leer_fecha(fecha_nacimiento)
+            identificador = self._siguiente_id
+            # Esto de abajo está mal pero no sé como controlarlo desde el menú que es donde pido al usuario si quiere jugador o cuerpo técnico
+            clase: Type[Personaje] = Jugador if diccionario is self.plantilla else CuerpoTecnico
+
+            personaje = clase(identificador, nombre, apellidos, fecha)
+            personaje.generar_cualidades()
+            diccionario[identificador] = personaje
+            self._siguiente_id += 1
+
+            # Lo de SQL tampoco sé como se haría pero iría aquí abajo reemplazando esto
             logger.info(
                 "Creado %s id=%s nombre=%s %s",
                 clase.__name__, identificador, nombre, apellidos

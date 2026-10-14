@@ -134,3 +134,18 @@ class Menu:
             print("Personaje eliminado.")
         else:
             print("No existe un personaje con ese identificador.")
+
+    def _agregarMiembro(self) -> None:
+        tipo = input("¿Qué tipo de miembro quieres agregar? \n 1. Jugador \n 2. Cuerpo técnico").strip()
+        nombre = input("Nombre: ").strip()
+        apellidos = input("Apellidos: ").strip()
+        fecha = input("Fecha de nacimiento (AAAA-MM-DD): ").strip()
+        if tipo == "1":
+            personaje = self.gestion.crear_personaje_plantilla(tipo, nombre, apellidos, fecha)
+            print(f"Personaje creado: {personaje}")
+        elif tipo == "2":
+            personaje = self.gestion.crear_personaje_plantilla(tipo, nombre, apellidos, fecha)
+            print(f"Personaje creado: {personaje}")
+        else:
+            print("No es un número válido.")
+

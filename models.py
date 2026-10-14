@@ -52,6 +52,26 @@ class Personaje(ABC):
             self.__class__.__name__, self.identificador
         )
 
+    def generar_cualidades_jugador(self) -> None:
+        self.cualidades = {
+            posicion: ["Portero", "Defensa", "Centrocampista", "Delantero"]
+            for posicion in self.nombres_cualidades()
+        }
+        logger.info(
+            "Cualidades generadas para %s id=%s",
+            self.__class__.__name__, self.identificador
+        )
+
+    def generar_cualidades_cuerpo_tecnico(self) -> None:
+        self.cualidades = {
+            rol: ["Entrenador", "Utillero"]
+            for rol in self.nombres_cualidades()
+        }
+        logger.info(
+            "Cualidades generadas para %s id=%s",
+            self.__class__.__name__, self.identificador
+        )
+
     @abstractmethod
     def nombres_cualidades(self) -> tuple:
         """Devuelve los nombres de las cualidades de la subclase."""
@@ -111,4 +131,19 @@ class Villano(Personaje):
             "entregadortardio",
             "ausencias",
             "hablador",
+        )
+
+class Jugador(Personaje):
+
+    def nombres_cualidades(self) -> tuple:
+        return (
+            "posicion",
+        )
+
+
+class CuerpoTecnico(Personaje):
+
+    def nombres_cualidades(self) -> tuple:
+        return (
+            "rol",
         )
